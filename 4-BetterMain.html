@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <style>
+        * {
+            user-select: none;
+        margin: 0;
+        padding: 0;
+        }
+
+        body {
+            box-sizing: border-box;
+            font-family: sans-serif;
+        }
+
+        canvas {
+            display: block;
+            /* overflow-x: hidden; */
+        }
+
+        #toolbar {
+            width: 100%;
+            height: 50px;
+            padding: 10px;
+            position: fixed;
+            top: 0;
+            background-color: #2f2f2f;
+            color: white;
+        }
+        #rad{
+            float: left;
+        }
+        #colors{
+            float: right;
+        }
+
+        .swatch{
+            width: 30px;
+            height: 30px;
+            border-radius: 15px;
+            box-shadow: inset 0px 1px 0px rgba(255,255,255,0.5),0px 2px 2px rgba(0,0,0,0.5);
+            display: inline-block;
+            margin-left: 10px;
+            background-color: cyan;
+        }
+
+        .swatch.active{
+            border: 2px solid white;
+            box-shadow: inset 0px 1px 2px rgba(0,0,0,0.5);
+        }
+
+        .radcontrol {
+            width: 30px;
+            height: 30px;
+            background-color: #4f4f4f;
+            display: inline-block;
+            text-align: center;
+        }
+
+        #save{
+            float: right;
+            margin-left: 20px;
+            height: 30px;
+            padding: 8px;
+            background-color: #434343;
+            }
+        #save:hover{
+            background-color: #818181;
+        }
+    </style>
+    <div id="toolbar">
+        <div id="rad">
+            Radius <span id="radval">10</span>
+            <div id="decrad" class="radcontrol">-</div>
+            <div id="incrad" class="radcontrol">+</div>
+        </div>
+        <div id="colors">
+            <!-- <div class="swatch" style="background-color: red;"></div>
+            <div class="swatch" style="background-color: green;"></div>
+            <div class="swatch active" style="background-color: blue;"></div> -->
+        </div>
+        <div id="save">
+            Save
+        </div>
+    </div>
+    <canvas id='canvas' height="800px" width="800px">
+        Your Browser messed Up!
+    </canvas>
+    <script>
+        // Classic Sketching Canvas
+        const canvas = document.getElementById('canvas')
+        let context = canvas.getContext("2d");
+        let radius = 10;
+
+
+        canvas.width = window.innerWidth
+        canvas.height = window.innerHeight
+        context.lineWidth = radius * 2;
+
+        console.log(canvas.height);
+        console.log(canvas.width);
+
+        const putPoint = (event) => {
+            if (dragging) {
+                context.lineTo(event.offsetX, event.offsetY);
+                context.stroke()
+                context.beginPath();
+                console.log(event);
+                context.arc(event.offsetX, event.offsetY, radius, 0, Math.PI * 2);
+                context.fill()
+                context.beginPath();
+                context.moveTo(event.offsetX, event.offsetY);
+            }
+        }
+
+        const engage = () => {
+            dragging = true;
+            putPoint()
+        }
+        const disengage = () => {
+            dragging = false;
+            context.beginPath()
+        }
+        canvas.addEventListener('mousedown', engage);
+        canvas.addEventListener('mousemove', putPoint);
+        canvas.addEventListener('mouseup', disengage);
+
+
+        // Toolkit For Radius Control
+        const setRadius = (newRadius) => {
+            if (newRadius < minRad) {
+                newRadius = minRad
+            }
+            else if (newRadius > maxRad) {
+                newRadius = maxRad
+            }
+
+            radius = newRadius;
+            context.lineWidth = radius * 2;
+            radSpan.innerHTML = radius;
+        }
+
+        var minRad = 0.5,
+            maxRad = 100,
+            deafultRad = 20,
+            interval = 5,
+            radSpan = document.getElementById("radval");
+        decRad = document.getElementById("decrad");
+        incRad = document.getElementById("incrad");
+
+        console.log(decRad);
+        console.log(incRad);
+        decRad.addEventListener("click", function () {
+            setRadius(radius - interval);
+        })
+        incRad.addEventListener("click", function () {
+            setRadius(radius + interval);
+        })
+
+
+        // Toolkit for Color Control
+        
+        const setColor = (color) => {
+            context.fillStyle = color;
+            context.strokeStyle = color;
+            console.log("worked!!");
+            let active = document.getElementsByClassName('active')[0];
+            if (active) {
+                active.className = 'swatch';
+            }
+
+        }
+
+        const setSwatch = (event) => {
+            let swatch = event.target
+
+            setColor(swatch.style.backgroundColor)
+            swatch.className +=" active"
+        }
+        const colors = ['black','grey','white','red','orange','yellow','green','blue','indigo','violet']
+
+        for (let index = 0; index < colors.length; index++) {
+            // const element = array[index];
+            let swatch = document.createElement('div');
+            swatch.className ='swatch';
+            swatch.style.backgroundColor = colors[index];
+            swatch.addEventListener('click', setSwatch);
+            console.log(swatch)
+            document.getElementById("colors").appendChild(swatch);
+        }
+
+    setSwatch({target:document.getElementsByClassName('swatch')[0]})
+     
+    // Adding Save Image Button
+
+    let saveBtn = document.getElementById("save");
+    
+    const saveImage =()=>{
+        const dataURL = canvas.toDataURL('image/png');
+    const link = document.createElement('a');
+    link.href = dataURL;
+    link.download = 'canvas-image.png'; 
+    link.click();
+    }
+
+    saveBtn.addEventListener("click", saveImage);
+    </script>
+</body>
+
+</html>

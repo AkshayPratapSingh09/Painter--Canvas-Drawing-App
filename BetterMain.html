@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        canvas {
+        display: block;
+        }
+    </style>
+    <canvas id='canvas' height="800px" width="800px" >
+        Your Browser messed Up!
+    </canvas>
+    <script>
+
+        const canvas = document.getElementById('canvas')
+        const context = canvas.getContext("2d");
+        const radius = 10;
+        
+        
+        canvas.width = window.innerWidth
+        canvas.height = window.innerHeight
+        context.lineWidth = radius*2;
+
+        console.log(canvas.height);
+        console.log(canvas.width);
+
+        const putPoint =(event)=>{
+            if(dragging){
+                context.lineTo(event.offsetX,event.offsetY);
+                context.stroke()
+                context.beginPath();
+                console.log(event);
+                context.arc(event.offsetX,event.offsetY,radius,0,Math.PI * 2);
+                context.fill()
+                context.beginPath();
+                context.moveTo(event.offsetX,event.offsetY);
+            }
+        }
+
+        const engage=()=>{
+            dragging=true;
+            putPoint(e)
+        }
+        const disengage=()=>{
+            dragging=false;
+            context.beginPath()
+        }
+        canvas.addEventListener('mousedown',engage);
+        canvas.addEventListener('mousemove',putPoint);
+        canvas.addEventListener('mouseup',disengage);
+    </script>
+</body>
+
+</html>

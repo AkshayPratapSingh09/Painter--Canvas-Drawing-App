@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+    </style>
+    <canvas id='canvas' height="800px" width="800px">
+        Your Browser messed Up!
+    </canvas>
+    <script>
+
+        const canvas = document.getElementById('canvas')
+        const context = canvas.getContext("2d");
+        const radius = 10;
+
+
+        canvas.width = window.innerWidth
+        canvas.height = window.innerHeight
+
+        console.log(canvas.height);
+        console.log(canvas.width);
+
+        const putPoint =(event)=>{
+            context.beginPath();
+            console.log(event);
+            context.arc(event.offsetX,event.offsetY,radius,0,Math.PI * 2);
+            context.fill()
+        }
+        canvas.addEventListener('mousedown',putPoint);
+    </script>
+</body>
+
+</html>
